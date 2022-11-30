@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="com.outsystems.mlkitplugin" version="1.0.0" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>MlKitPlugin</name>
+    <js-module name="MlKitPlugin" src="www/MlKitPlugin.js">
+        <clobbers target="cordova.MlKitPlugin" />
+    </js-module>
+
+    <hook type="before_plugin_install" src="hooks/configurations/installDependencies.js" />
+    <hook type="before_plugin_install" src="hooks/configurations/unzipAndCopyConfigurations.js" />
+
+    <hook type="after_prepare" src="hooks/ios/add-swift-support.js" />
+
+    <hook type="after_prepare" src="scripts/after_prepare.js" />
+
+    <platform name="android">
+
+        <config-file parent="/*" target="res/xml/config.xml">
+            <feature name="MlKitPlugin">
+                <param name="android-package" value="com.outsystems.mlkitplugin.MlKitPlugin" />
+                <param name="onload" value="true" />
+            </feature>
+        </config-file>
+
+        <hook type="after_plugin_install" src="hooks/android/after_plugin_install.js" />
+        <hook type="before_plugin_uninstall" src="hooks/android/before_plugin_uninstall.js" />
+
+        <source-file src="src/android/MlKitPlugin.java" target-dir="src/com/outsystems/mlkitplugin/MlKitPlugin" />
+
+        <config-file parent="/*" target="AndroidManifest.xml">
+            <uses-permission android:name="android.permission.CAMERA" />
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+            <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+			<provider android:grantUriPermissions="true" android:exported="false" android:name="android.support.v4.content.FileProvider" android:authorities="${applicationId}" >
+                <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@layout/fileprovider" />
+            </provider>
+		</config-file>
+
+        <source-file src="src/android/fileprovider.xml" target-dir="res/layout"/>
+
+        <framework src="src/android/build.gradle" custom="true" type="gradleReference" />
+
+        <resource-file src="google-services.json" target="./google-services.json" />
+
+        <framework src="com.android.support:support-v4:27.+"/>
+        <framework src="com.google.firebase:firebase-ml-vision:20.0.0" />
+		<framework src="com.google.android.gms:play-services-tagmanager:16.0.4" />
+		<framework src="com.google.firebase:firebase-core:16.0.4" />
+        <framework src="com.google.firebase:firebase-ml-vision-image-label-model:17.0.2" />
+        <framework src="com.google.firebase:firebase-ml-vision-face-model:17.0.2" />
+        <framework src="com.google.firebase:firebase-ml-natural-language:19.0.1" />
+        <framework src="com.google.firebase:firebase-ml-natural-language-language-id-model:19.0.1" />
+        <framework src="com.google.firebase:firebase-ml-natural-language-smart-reply-model:19.0.1" />
+
+    </platform>
+
+
+    <platform name="ios">
+
+        <hook type="after_platform_add" src="hooks/ios/add-swift-support.js" />
+        <hook type="after_plugin_add" src="hooks/ios/add-swift-support.js" />
+
+
+        <hook type="after_platform_add" src="hooks/ios/build-modifier.js" />
+        <hook type="after_plugin_add" src="hooks/ios/build-modifier.js" />
+
+        <config-file parent="/*" target="config.xml">
+            <feature name="MlKitPlugin">
+                <param name="ios-package" value="MlKitPlugin" />
+            </feature>
+        </config-file>
+
+        <header-file src="src/ios/MlKitPluginBridging-Header.h" type="BridgingHeader"/>
+        <source-file src="src/ios/MlKitPlugin.swift" />
+
+
+        <framework src="MobileCoreServices.framework" />
+        <framework src="AVFoundation.framework" />
+
+        <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
+            <string>This app requires camera access to function properly.</string>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="NSPhotoLibraryUsageDescription">
+            <string>This app requires photo library access to function properly.</string>
+        </config-file>
+
+        <header-file src="src/ios/AppDelegate+MLPlugin.h" />
+		<source-file src="src/ios/AppDelegate+MLPlugin.m" />
+
+        <resource-file src="GoogleService-Info.plist" target="./GoogleService-Info.plist" />
+
+        <framework src="FirebaseMLVision" type="podspec" spec="~>0.15.0"/>
+        <framework src="FirebaseAnalytics" type="podspec" spec="~>5.4.0" />
+        <framework src="FirebaseMLVisionTextModel" type="podspec" spec="~>0.15.0" />
+        <framework src="FirebaseMLVisionLabelModel" type="podspec" spec="~>0.15.0" />
+        <framework src="FirebaseMLVisionFaceModel" type="podspec" spec="~>0.15.0" />
+        <framework src="FirebaseMLNaturalLanguage" type="podspec" spec="~>0.15.0" />
+        <framework src="FirebaseMLNLLanguageID" type="podspec" spec="~>0.15.0" />
+        <framework src="FirebaseMLNLSmartReply" type="podspec" spec="~>0.15.0" />
+
+    </platform>
+</plugin>
